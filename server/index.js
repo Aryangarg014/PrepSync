@@ -1,13 +1,22 @@
+// Packages
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const dotenv = require("dotenv")
+dotenv.config();
+
+// Routers
+const mainRouter = require("./routes/main.router");
 
 const app = express();
 const port = 8080;
 
+// middlewares
 app.use(cors());
 app.use(express.json());
+
+// routes
+app.use("/", mainRouter)
 
 
 mongoose.connect(process.env.MONGO_URI)
@@ -17,10 +26,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((error) => {
     console.log("Database connection error: ", error);
   });
-
-app.get("/", (req, res) => {
-  res.send("server working");
-});
 
 app.listen(port, () => {
   console.log(`server listening on ${port}`);
