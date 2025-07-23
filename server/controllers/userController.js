@@ -2,10 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
-const signup = async (req, res) => {
+async function signup(req, res) {
+    const { name, email, password } = req.body;
     try{
-        const { name, email, password } = req.body;
-
         if(!name || !email || !password){
             return res.status(400).json({ message : "Some fields are missing." });
         }
@@ -28,17 +27,47 @@ const signup = async (req, res) => {
         const token = jwt.sign({ id : newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn : "3d" });
         res.status(201).json({
             message : "Signup is successful.",
-            token
+            token,
+            user: { 
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
         });
     }
     catch(error){
-        console.error("Signup Error : ", error);
-        res.status(500).json({message : "Internal Server Error"});
+        console.error("Error during Signup: ", error.message);
+        res.status(500).send("Internal Server Error");
     }
 }
 
-const login = (req, res) => {
-    res.send("logging in..");
+async function login(req, res) {
+    const {email, password} = req.body;
+    try{
+        const user = await User.findOne({ email });
+        if(!user){
+            return res.status(400).json( { message : "Invalid Credentials!"});
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch){
+            return res.status(400).json( { message : "Invalid Credentials!"});
+        }
+
+        const token = jwt.sign({id : user._id}, process.env.JWT_SECRET_KEY, {expiresIn : "3d"});
+        res.status(201).json({
+            token,
+            user: { 
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        })
+    }
+    catch(error){
+        console.error("Error during Login : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
 const getCurrentUser = (req, res) => {
