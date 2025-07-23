@@ -29,9 +29,9 @@ async function signup(req, res) {
             message : "Signup is successful.",
             token,
             user: { 
-                id: user._id,
-                name: user.name,
-                email: user.email
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email
             }
         });
     }
@@ -44,6 +44,10 @@ async function signup(req, res) {
 async function login(req, res) {
     const {email, password} = req.body;
     try{
+        if(!email || !password){
+            return res.status(400).json({ message : "All fields are required." });
+        }
+
         const user = await User.findOne({ email });
         if(!user){
             return res.status(400).json( { message : "Invalid Credentials!"});
@@ -55,7 +59,7 @@ async function login(req, res) {
         }
 
         const token = jwt.sign({id : user._id}, process.env.JWT_SECRET_KEY, {expiresIn : "3d"});
-        res.status(201).json({
+        res.status(200).json({
             token,
             user: { 
                 id: user._id,
@@ -70,27 +74,78 @@ async function login(req, res) {
     }
 }
 
-const getCurrentUser = (req, res) => {
-    res.send("Current user fetched!");
+async function getUserProfile(req, res) {
+    const userId = req.params.id;
+    try{
+        const user = await User.findById(userId).select("-password");
+        if(!user){
+            return res.status(404).json( { message : "User not found!"});
+        }
+
+        res.status(200).json(user);
+    }
+    catch(error){
+        console.error("Error during fetching profile : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
-// const getUserProfile = (req, res) => {
-//     res.send("Profile fetched!");
-// }
+async function updateUserProfile(req, res) {
+    const userId = req.params.id;
+    const {email, password} = req.body;
+    try{
+        if(!email && !password){
+            return res.status(400).json( { message : "Atleast one field is required to update."});
+        }
 
-const updateUserProfile = (req, res) => {
-    res.send("Profile updated!");
+        let updatedFields = {};
+
+        if(email){
+            const existingUser = await User.findOne({ email });
+            if(existingUser && existingUser._id.toString() !== userId){
+                return res.status(400).json({ message: "Email is already in use by another user." });
+            }
+            updatedFields.email = email;
+        }
+        if(password){
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            updatedFields.password = hashedPassword;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, { new : true }).select("-password");
+        if(!updatedUser){
+            return res.status(404).json( { message : "User not found!"});
+        }
+
+        res.status(200).json(updatedUser);
+    }
+    catch(error){
+        console.error("Error during updating profile : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
-const deleteUserProfile = (req, res) => {
-    res.send("Profile deleted..");
+async function deleteUserProfile(req, res) {
+    const userId = req.params.id;
+    try{
+        const deletedUser = await User.findByIdAndDelete(userId);
+        if(!deletedUser){
+            return res.status(404).json( { message : "User not found!"});
+        }
+
+        res.status(200).send("User Profile Deleted Successfully!");
+    }
+    catch(error){
+        console.error("Error during deleting profile : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
 module.exports = {
     signup,
     login,
-    getCurrentUser,
-    // getUserProfile,
+    getUserProfile,
     updateUserProfile,
     deleteUserProfile
 }

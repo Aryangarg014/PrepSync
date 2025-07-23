@@ -8,9 +8,8 @@ userRouter.post("/signup", userController.signup);
 userRouter.post("/login", userController.login);
 
 // Protected
-userRouter.get("/me", userController.getCurrentUser);
-// userRouter.get("/profile", userController.getUserProfile);
-userRouter.patch("/me", userController.updateUserProfile);
-userRouter.delete("/me", userController.deleteUserProfile);
+userRouter.get("/profile/:id", userController.getUserProfile);
+userRouter.patch("/profile/:id", userController.updateUserProfile);
+userRouter.delete("/profile/:id", userController.deleteUserProfile);
 
 module.exports = userRouter;
