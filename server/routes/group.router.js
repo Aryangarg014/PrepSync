@@ -8,6 +8,7 @@ const authenticateUser = require("../middlewares/authMiddleware");
 // Protected
 groupRouter.post("/create", authenticateUser, groupController.createGroup);
 groupRouter.post("/join/:id", authenticateUser, groupController.joinGroup);
+groupRouter.post("/leave/:id", authenticateUser, groupController.leaveGroup);
 groupRouter.get("/my-groups", authenticateUser, groupController.getUserGroups);
 groupRouter.get("/:id", authenticateUser, groupController.getGroupDetails);
 groupRouter.delete("/:id", authenticateUser, groupController.deleteGroup);

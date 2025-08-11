@@ -28,7 +28,51 @@ async function createGroup(req, res){
 }
 
 async function joinGroup(req, res){
-    
+    const userId = req.user.id;
+    const groupId = req.params.id;
+    try{
+        const group = await Group.findById(groupId)
+        if(!group){
+            return res.status(404).json({ message : "Group not found" });
+        }
+        if(group.members.includes(userId)){
+            return res.status(400).json({ message : "Already a member of this group." });
+        }
+
+        group.members.push(userId);
+        await group.save();
+        res.status(200).json({ message : "Group joined successfully.", group });
+    }
+    catch(error){
+        console.error("Error joining group : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+async function leaveGroup(req, res) {
+    const userId = req.user.id;
+    const groupId = req.params.id;
+    try{
+        const group = await Group.findById(groupId)
+        if(!group){
+            return res.status(404).json({ message : "Group not found" });
+        }
+        if(!group.members.includes(userId)){
+            return res.status(400).json({ message : "You are not a member of this group." });
+        }
+
+        if (group.createdBy.toString() === userId) {
+            return res.status(403).json({ message: "Group Admin cannot leave the group. You may delete it instead." });
+        }
+
+        group.members = group.members.filter((memberId) => memberId.toString() !== userId);
+        await group.save();
+        res.status(200).json({ message : "Group left successfully.", group });
+    }
+    catch(error){
+        console.error("Error in leaving group : ", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 }
 
 async function getUserGroups(req, res){
@@ -86,6 +130,7 @@ async function deleteGroup(req, res){
 module.exports = {
     createGroup,
     joinGroup,
+    leaveGroup,
     getUserGroups,
     getGroupDetails,
     deleteGroup
