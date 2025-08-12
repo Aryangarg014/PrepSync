@@ -17,7 +17,7 @@ const goalSchema = new mongoose.Schema({
     group : {          // Which group the goal belongs to
         type : mongoose.Schema.Types.ObjectId,
         ref : "Group",
-        required : true
+        default : null  // for personal goals
     },
     dueDate : {
         type : Date,
