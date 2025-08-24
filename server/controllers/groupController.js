@@ -23,7 +23,7 @@ async function createGroup(req, res){
     }
     catch(error){
         console.error("Error in creating group : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -45,7 +45,7 @@ async function joinGroup(req, res){
     }
     catch(error){
         console.error("Error joining group : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -71,7 +71,7 @@ async function leaveGroup(req, res) {
     }
     catch(error){
         console.error("Error in leaving group : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -84,7 +84,7 @@ async function getUserGroups(req, res){
     }
     catch(error){
         console.error("Error in fetching all user groups : ", error.message);
-        res.status(500).send("Internal Server Error.");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -102,7 +102,7 @@ async function getGroupDetails(req, res){
     }
     catch(error){
         console.error("Error in fetching group details : ", error.message);
-        res.status(500).send("Internal Server Error.");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -123,7 +123,7 @@ async function deleteGroup(req, res){
     }
     catch(error){
         console.error("Error in deleting group : ", error.message);
-        res.status(500).send("Internal Server Error.");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 

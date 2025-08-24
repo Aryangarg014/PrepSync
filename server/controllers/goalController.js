@@ -44,12 +44,33 @@ async function createGoal(req, res){
     }
     catch(error){
         console.error("Error in creating goal : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
 async function getUserGoals(req, res){
+    const userId = req.user.id;
+    try{
+        const personalGoals = await Goal.find({ group: null, createdBy : userId })
+                                        .sort({ createdAt : -1 })
+                                        .populate("createdBy", "name email")
+                                        .populate("completedBy.user", "name email");
 
+        const userGroups = await Group.find({ members : userId }).select("_id");
+        const groupIds = userGroups.map(g => g._id);
+
+        const groupGoals = await Goal.find({ group : { $in : groupIds }})
+                                    .sort({ createdAt : -1 })
+                                    .populate("group", "name")
+                                    .populate("createdBy", "name email")
+                                    .populate("completedBy.user", "name email");
+
+        return res.status(200).json({ personalGoals, groupGoals });
+    }
+    catch(error){
+        console.error("Error fetching user goals: ", error.message);
+        res.status(500).json({ error : "Internal Server Error" });
+    }
 }
 
 async function getGoalsByGroup(req, res){
@@ -74,7 +95,7 @@ async function getGoalsByGroup(req, res){
     }
     catch(error){
         console.error("Error fetching group goals: ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -111,7 +132,7 @@ async function getGoalDetails(req, res){
     }
     catch(error){
         console.error("Error fetching goal details: ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -154,7 +175,7 @@ async function markGoalComplete(req, res){
     }
     catch(error){
         console.error("Error marking the goal as completed: ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -196,7 +217,7 @@ async function deleteGoal(req, res){
     }
     catch(error){
         console.error("Error deleting goal : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -252,7 +273,7 @@ async function updateGoal(req, res){
     }
     catch(error){
         console.error("Error updating goal : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 

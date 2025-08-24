@@ -37,7 +37,7 @@ async function signup(req, res) {
     }
     catch(error){
         console.error("Error during Signup: ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -70,7 +70,7 @@ async function login(req, res) {
     }
     catch(error){
         console.error("Error during Login : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -86,7 +86,7 @@ async function getUserProfile(req, res) {
     }
     catch(error){
         console.error("Error during fetching profile : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -122,7 +122,7 @@ async function updateUserProfile(req, res) {
     }
     catch(error){
         console.error("Error during updating profile : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
@@ -138,7 +138,7 @@ async function deleteUserProfile(req, res) {
     }
     catch(error){
         console.error("Error during deleting profile : ", error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).json({ error : "Internal Server Error" });
     }
 }
 
