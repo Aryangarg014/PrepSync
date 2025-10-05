@@ -1,4 +1,5 @@
 const Group = require("../models/Group");
+const User = require("../models/User");
 
 async function createGroup(req, res){
     const userId = req.user.id;
@@ -31,7 +32,7 @@ async function joinGroup(req, res){
     const userId = req.user.id;
     const groupId = req.params.id;
     try{
-        const group = await Group.findById(groupId)
+        const group = await Group.findById(groupId);
         if(!group){
             return res.status(404).json({ message : "Group not found" });
         }
@@ -39,8 +40,16 @@ async function joinGroup(req, res){
             return res.status(400).json({ message : "Already a member of this group." });
         }
 
+        const user = await User.findById(userId);
+        if(!user){
+            return res.status(404).json({ message : "User not found." });
+        }
+
         group.members.push(userId);
+        user.joinedGroups.push(groupId);
+        
         await group.save();
+        await user.save();
         res.status(200).json({ message : "Group joined successfully.", group });
     }
     catch(error){
@@ -64,9 +73,15 @@ async function leaveGroup(req, res) {
         if (group.createdBy.toString() === userId) {
             return res.status(403).json({ message: "Group Admin cannot leave the group. You may delete it instead." });
         }
+        const user = await User.findById(userId);
+        if(!user){
+            return res.status(404).json({ message : "User not found." });
+        }
 
         group.members = group.members.filter((memberId) => memberId.toString() !== userId);
         await group.save();
+        user.joinedGroups.filter((joinedGroupId) => joinedGroupId.toString() != groupId);
+        await user.save();
         res.status(200).json({ message : "Group left successfully.", group });
     }
     catch(error){

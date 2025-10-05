@@ -1,5 +1,6 @@
 const Goal = require("../models/Goal");
 const Group = require("../models/Group");
+const User = require("../models/User");
 
 async function createGoal(req, res){
     const userId = req.user.id;
@@ -170,8 +171,42 @@ async function markGoalComplete(req, res){
             goal.completedBy.push({user : userId, status : "late"});
         }
         await goal.save();
+
+        // STREAK
+        const user = await User.findById(userId);
+
+        const now = new Date();
+        const istTime = now.getTime() + (5.5 * 60 * 60 * 1000);
+        const dateInIndia = new Date(istTime);
+
+        // Manually set the time to the start of the day (midnight)
+        const today = new Date(dateInIndia);
+        today.setUTCHours(0, 0, 0, 0); // Use setUTCHours for consistency
+
+        if (user.lastCompletedDate &&
+            user.lastCompletedDate.getDate() == today.getDate() && user.lastCompletedDate.getMonth() == today.getMonth()
+            && user.lastCompletedDate.getFullYear() == today.getFullYear()){
+
+            // Already Completed another goal today (streak not updated)
+            return res.status(200).json( { message : "Goal marked completed successfully.", goal } );
+        }
         
-        return res.status(200).json( { message : "Goal marked completed successfully.", goal } );
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        if (user.lastCompletedDate &&
+            user.lastCompletedDate.getDate() == yesterday.getDate() && user.lastCompletedDate.getMonth() == yesterday.getMonth()
+            && user.lastCompletedDate.getFullYear() == yesterday.getFullYear()
+        ){
+            user.streak += 1;
+        }
+        else{
+            user.streak = 1;
+        }
+
+        user.lastCompletedDate = today;
+        await user.save();
+        return res.status(200).json( { message : "Goal marked completed successfully and streak updated.", goal, streak : user.streak } );
     }
     catch(error){
         console.error("Error marking the goal as completed: ", error.message);

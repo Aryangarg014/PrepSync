@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
             ref : "Group"
         }
     ],
+    lastCompletedDate : {
+        type : Date,
+        default : null
+    },
     streak : {
         type : Number,
         default : 0
