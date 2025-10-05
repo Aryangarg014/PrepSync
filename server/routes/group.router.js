@@ -1,5 +1,6 @@
 const express = require("express");
 const groupController = require("../controllers/groupController");
+const leaderboardController = require("../controllers/leaderboardController");
 
 const groupRouter = express.Router();
 
@@ -10,5 +11,7 @@ groupRouter.post("/leave/:id", groupController.leaveGroup);
 groupRouter.get("/my-groups", groupController.getUserGroups);
 groupRouter.get("/:id", groupController.getGroupDetails);
 groupRouter.delete("/:id", groupController.deleteGroup);
+// Group Leaderboard
+groupRouter.get("/:id/leaderboard", leaderboardController.getGroupLeaderboard);
 
 module.exports = groupRouter;
