@@ -38,6 +38,7 @@ async function getGroupLeaderboard(req, res) {
                 name: member.name,
                 email: member.email,
                 streak: member.streak || 0,
+                // check if that memberGoalCount exist (whether the member has completed this group's any goal or not)
                 totalCompletedInGroup: memberGoalCount ? memberGoalCount.totalCompletedInGroup : 0
             };
         });
