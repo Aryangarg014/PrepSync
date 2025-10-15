@@ -13,7 +13,19 @@ async function getMainStats(userId){
 }
 
 async function getDailyCompletions(userId, days){
-
+    const dailyCompletions = await Goal.aggregate([
+        { $unwind : "completedBy" },
+        { $match : { "completedBy.user" : userId } },
+        { $group : {
+            _id : { $dateToString : { format : "%Y-%m-%d", date : "completedBy.completedAt", timezone : "Asia/Kolkata" } },
+            count : { $sum : 1 }
+          }
+        },
+        { $sort : { _id : -1 } },
+        { $limit : days },
+        { $project : { _id : 0, date : "$_id", count : "$count" } }
+    ]);
+    return dailyCompletions;
 }
 
 async function getGroupPerformance(userId){
@@ -44,7 +56,7 @@ async function getGroupPerformance(userId){
           }
         }
     ]);
-    return performance;
+    return groupPerformance;
 }
 
 
