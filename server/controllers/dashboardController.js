@@ -14,10 +14,10 @@ async function getMainStats(userId){
 
 async function getDailyCompletions(userId, days){
     const dailyCompletions = await Goal.aggregate([
-        { $unwind : "completedBy" },
+        { $unwind : "$completedBy" },
         { $match : { "completedBy.user" : userId } },
         { $group : {
-            _id : { $dateToString : { format : "%Y-%m-%d", date : "completedBy.completedAt", timezone : "Asia/Kolkata" } },
+            _id : { $dateToString : { format : "%Y-%m-%d", date : "$completedBy.completedAt", timezone : "Asia/Kolkata" } },
             count : { $sum : 1 }
           }
         },
@@ -32,7 +32,7 @@ async function getGroupPerformance(userId){
     const groupPerformance = await Goal.aggregate([
         { $match : { "completedBy.user" : userId, group : { $ne : null } } },
         // unwind deconstruct the array in a manner that for each element of the array a new document is made
-        { $unwind : "completedBy" },
+        { $unwind : "$completedBy" },
         { $match : { "completedBy.user" : userId } },
         { $group : {
             _id : "$group",
@@ -47,7 +47,7 @@ async function getGroupPerformance(userId){
             as : "groupInfo"    // groupInfo is added as an attribute with an array of matching documents from groups
           } 
         },
-        { $unwind : "groupInfo" },  // again unwind the groupInfo array
+        { $unwind : "$groupInfo" },  // again unwind the groupInfo array
         { $project : {
             _id : 0,
             groupId : "$_id",
@@ -61,7 +61,7 @@ async function getGroupPerformance(userId){
 
 
 async function getDashboardData(req, res){
-    const userId = mongoose.Types.ObjectId(req.user.id);
+    const userId = new mongoose.Types.ObjectId(req.user.id);
     try{
         // Use promise.all to run all queries in parallel
         const [user, mainStats, streakGraphData, heatmapData, groupPerformance]
