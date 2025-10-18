@@ -9,6 +9,10 @@ const resourceSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    publicId : {
+        type : String, // Stores the Cloudinary public_id (file id)
+        default : null
+    },
     groups : [  // the groups in which the resource is shared
         {
             type : mongoose.Schema.Types.ObjectId,
