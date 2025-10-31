@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { getUserGoals, createGoal } from "../api/goalService";
+import GoalItem from "../components/GoalItem";
 
 const MyGoalsPage = () => {
     // state for the getUserGoals
@@ -18,7 +19,7 @@ const MyGoalsPage = () => {
             setLoading(true);
             const goals = await getUserGoals();
             setPersonalGoals(goals.personalGoals);
-            setGroupGoals(goals.getGroupGoals);
+            setGroupGoals(goals.groupGoals);
             setError(null);
         }
         catch(err){
@@ -56,6 +57,14 @@ const MyGoalsPage = () => {
         }
     }
 
+    if (loading) {
+        return <div style={{ padding: '2rem' }}>Loading your goals...</div>;
+    }
+
+    if (error) {
+        return <div style={{ padding: '2rem', color: 'red' }}>Error: {error}</div>;
+    }
+
     return (
         <div style={{padding : "2rem"}}>
             <h1>My Goals</h1>
@@ -90,7 +99,11 @@ const MyGoalsPage = () => {
                 { personalGoals?.length > 0 ? (
                     <ul>
                         {personalGoals.map((goal) => (
-                            <li key={goal._id}>{goal.title}</li>
+                            <GoalItem 
+                                key={goal._id}
+                                goal={goal} 
+                                onGoalUpdate={fetchGoals}
+                            />
                         ))}
                     </ul>
                 ) : (
@@ -103,10 +116,11 @@ const MyGoalsPage = () => {
                 { groupGoals?.length > 0 ? (
                     <ul>
                         {groupGoals.map((goal) => (
-                            <li key={goal._id}>
-                                {goal.title}
-                                (from group: {goal.group.name})
-                            </li>
+                            <GoalItem 
+                                key={goal._id}
+                                goal={goal} 
+                                onGoalUpdate={fetchGoals}
+                            />
                         ))}
                     </ul>
                 ) : (

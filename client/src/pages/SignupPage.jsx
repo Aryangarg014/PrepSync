@@ -23,7 +23,7 @@ const SignupPage = () => {
 
             login(responseData.user, responseData.token);       // saves {user, token} to localStorage
 
-            alert("Signup successful!");
+            // alert("Signup successful!");
             navigate("/dashboard");
         }
         catch(err){

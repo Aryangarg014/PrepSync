@@ -22,7 +22,7 @@ const LoginPage = () => {
 
             login(responseData.user, responseData.token);       // saves {user, token} to localStorage
 
-            alert("Login successful!");
+            // alert("Login successful!");
             navigate("/dashboard")
         }
         catch(err){
