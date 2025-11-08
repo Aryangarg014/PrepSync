@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
 import MyGoalsPage from "./pages/MyGoalsPage";
+import MyGroupsPage from "./pages/myGroupsPage";
 import LogoutButton from "./components/LogoutButton";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -25,6 +26,7 @@ function App(){
           <>
             <Link to="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
             <Link to="/my-goals" style={{ marginRight: '1rem' }}>My Goals</Link>
+            <Link to="/my-groups" style={{ marginRight: '1rem' }}>My Groups</Link>
             <LogoutButton />
           </>
         ) : (
@@ -50,6 +52,11 @@ function App(){
         <Route
           path="/my-goals"
           element={ <ProtectedRoute> <MyGoalsPage/> </ProtectedRoute> }
+        />
+
+        <Route
+          path="/my-groups"
+          element={ <ProtectedRoute> <MyGroupsPage></MyGroupsPage> </ProtectedRoute>}
         />
         
       </Routes>
