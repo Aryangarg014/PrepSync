@@ -19,3 +19,13 @@ export async function getUserGroups(){
         throw new Error(error.response?.data?.message || "Failed to fetch groups.");
     }
 }
+
+export async function joinGroup(groupId){
+    try{
+        const response = await apiClient.post(`/groups/join/${groupId}`);
+        return response.data;   // { message, group }
+    }
+    catch(error){
+        throw new Error(error.response?.data?.message || "Failed to join group.");
+    }
+}

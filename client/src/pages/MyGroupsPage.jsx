@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createGroup, getUserGroups } from "../api/groupService";
+import { createGroup, getUserGroups, joinGroup } from "../api/groupService";
 
 const MyGroupsPage = () => {
     // State for the list of groups
@@ -11,6 +11,9 @@ const MyGroupsPage = () => {
     const [newGroupName, setNewGroupName] = useState("");
     const [newGroupDesc, setNewGroupDesc] = useState("");
     const [formError, setFormError] = useState(null);
+
+    const [groupIdToJoin, setGroupIdToJoin] = useState("");
+    const [joinFormError, setJoinFormError] = useState(null);
 
     async function fetchGroups(){
         try{
@@ -52,6 +55,24 @@ const MyGroupsPage = () => {
         }
     }
 
+    async function handleJoinGroup(e){
+        e.preventDefault();
+        setJoinFormError(null);
+
+        if(!groupIdToJoin){
+            setJoinFormError("Group Id is required.");
+            return;
+        }
+
+        try{
+            await joinGroup(groupIdToJoin);
+            setGroupIdToJoin("");
+            await fetchGroups();
+        }
+        catch(err){
+            setJoinFormError(err.message);
+        }
+    }
 
     if (loading) {
         return <div style={{ padding: '2rem' }}>Loading your groups...</div>;
@@ -87,7 +108,25 @@ const MyGroupsPage = () => {
                     </div>
                     
                     <button type="submit">Create Group</button>
-                    {formError && <p style={{color : "red"}}>{formError}</p>}
+                    {formError && <p style={{color : "red"}}>{ formError }</p>}
+                </form>
+            </div>
+
+            <div>
+                <h3>Join a Group</h3>
+                <form onSubmit={handleJoinGroup}>
+                    <div style={{ marginBottom : '0.5rem' }}>
+                        <label>Group ID:</label>
+                        <input
+                            type="text"
+                            value={groupIdToJoin}
+                            onChange={(e) => { setGroupIdToJoin(e.target.value); }}
+                            placeholder="Paste Group ID here"
+                            required
+                        />
+                    </div>
+                    <button type="submit">Join Group</button>
+                    {joinFormError && <p style={{color : "red"}}>{ joinFormError }</p>}
                 </form>
             </div>
 
