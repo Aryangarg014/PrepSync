@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createGroup, getUserGroups, joinGroup } from "../api/groupService";
+import { Link } from "react-router-dom";
 
 const MyGroupsPage = () => {
     // State for the list of groups
@@ -135,10 +136,16 @@ const MyGroupsPage = () => {
                 {groups.length > 0 ? (
                     <ul>
                         {groups.map((group) => (
-                            <li key={group._id}>
-                                <h4>{group.name}</h4>
-                                <p>{group.description}</p>
-                            </li>
+                            <Link
+                                to={`/group/${group._id}`}
+                                key={group._id}
+                                style={{ textDecoration: 'none', color: 'black' }}
+                            >
+                                <li>
+                                    <h4>{group.name}</h4>
+                                    <p>{group.description}</p>
+                                </li>
+                            </Link>
                         ))}
                     </ul>
                 ) : (

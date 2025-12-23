@@ -29,3 +29,13 @@ export async function joinGroup(groupId){
         throw new Error(error.response?.data?.message || "Failed to join group.");
     }
 }
+
+export async function getGroupDetails(groupId){
+    try{
+        const response = await apiClient.get(`/groups/${groupId}`);
+        return response.data;
+    }
+    catch(error){
+        throw new Error(error.response?.data?.message || "Failed to fetch group details.");
+    }
+}

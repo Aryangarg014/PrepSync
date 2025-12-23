@@ -9,6 +9,7 @@ import LogoutButton from "./components/LogoutButton";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GroupDetailsPage from "./pages/GroupDetailsPage";
 
 function App(){
   const { isAuthenticated, loading } = useContext(AuthContext);
@@ -58,7 +59,11 @@ function App(){
           path="/my-groups"
           element={ <ProtectedRoute> <MyGroupsPage></MyGroupsPage> </ProtectedRoute>}
         />
-        
+        <Route
+          path="/group/:id"
+          element={ <ProtectedRoute> <GroupDetailsPage></GroupDetailsPage> </ProtectedRoute> }
+          />
+
       </Routes>
 
     </div>
