@@ -1,6 +1,7 @@
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const path = require('path');
 
 // Configure Cloudinary
 cloudinary.config({ 
@@ -9,13 +10,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
-// Configure CloudinaryStorage
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'PrepSync_Resources', // The name of the folder in Cloudinary
-    allowed_formats: ['pdf', 'doc', 'docx', 'txt', 'png', 'jpg', 'jpeg'], // Whitelist
-    resource_type: 'auto' // Automatically detect the file type
+  cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: "PrepSync_Resources",
+      resource_type: "auto",   // ALWAYS AUTO
+      public_id: `${path.parse(file.originalname).name}-${Date.now()}`
+    };
   }
 });
 

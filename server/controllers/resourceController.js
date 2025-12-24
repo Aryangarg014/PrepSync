@@ -1,6 +1,7 @@
 const Resource = require("../models/Resource");
 const Group = require("../models/Group");
 const cloudinary = require('cloudinary').v2;
+const axios = require('axios');
 
 async function addResource(req, res){
     const {title, url, groupId} = req.body;
@@ -110,8 +111,32 @@ async function deleteResource(req, res){
     }
 }
 
+async function downloadResource(req, res) {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource || !resource.publicId) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    const response = await axios.get(resource.url, {
+      responseType: "stream",
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${resource.title}"`
+    );
+    res.setHeader("Content-Type", response.headers["content-type"]);
+
+    response.data.pipe(res);
+  } catch (error) {
+    console.error("Error dowloading resource : ", error.message);
+        return res.status(500).json({ error : "Internal Server Error" });
+  }
+}
 module.exports = {
     addResource,
     getGroupResources,
-    deleteResource
-}
+    deleteResource,
+    downloadResource
+};

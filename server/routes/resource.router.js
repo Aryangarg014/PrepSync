@@ -11,5 +11,6 @@ resourceRouter.post(
 );
 resourceRouter.get("/group/:id", resourceController.getGroupResources);
 resourceRouter.delete("/:resourceId/group/:groupId", resourceController.deleteResource);
+resourceRouter.get("/download/:id", resourceController.downloadResource);
 
 module.exports = resourceRouter;
