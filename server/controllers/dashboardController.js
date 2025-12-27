@@ -12,20 +12,79 @@ async function getMainStats(userId){
     return {totalCompleted, personalGoalsCompleted, groupGoalsCompleted, totalPending};
 }
 
-async function getDailyCompletions(userId, days){
-    const dailyCompletions = await Goal.aggregate([
-        { $unwind : "$completedBy" },
-        { $match : { "completedBy.user" : userId } },
-        { $group : {
-            _id : { $dateToString : { format : "%Y-%m-%d", date : "$completedBy.completedAt", timezone : "Asia/Kolkata" } },
-            count : { $sum : 1 }
-          }
-        },
-        { $sort : { _id : -1 } },
-        { $limit : days },
-        { $project : { _id : 0, date : "$_id", count : "$count" } }
+// Get the "Real UTC" timestamp for Midnight IST of a specific date
+function getISTMidnight(dateObj) {
+    const d = new Date(dateObj);
+    
+    // Adjust to IST (Add 5.5 hours) to see what day it is in India
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const istTime = new Date(d.getTime() + istOffset);
+    
+    // Strip the time part (Set to Midnight 00:00:00)
+    istTime.setUTCHours(0, 0, 0, 0);
+    
+    // Subtract the offset to get back to "Real UTC"
+    // Midnight IST is 18:30 UTC of the previous day
+    return new Date(istTime.getTime() - istOffset);
+}
+
+// Generate continuous date strings (YYYY-MM-DD) based on IST
+function getLastXDaysDates(days) {
+    const dates = [];
+    const now = new Date();
+    
+    // Loop backwards from today
+    for (let i = 0; i < days; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        
+        // Convert this specific date to IST string to match MongoDB output
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istDate = new Date(d.getTime() + istOffset);
+        
+        dates.push(istDate.toISOString().split('T')[0]);
+    }
+    return dates.reverse(); // [Oldest, ..., Newest]
+}
+
+async function getActivityData(userId, days) {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() - days + 1); // +1 to include today
+
+    // Get the Exact UTC timestamp for Midnight IST of that day
+    // This ensures we catch activity that happened at 1:00 AM IST (which is previous day UTC)
+    const startDate = getISTMidnight(targetDate);
+
+    const rawData = await Goal.aggregate([
+        { $unwind: "$completedBy" },
+        { $match: { 
+            "completedBy.user": userId,
+            // Compare Real UTC in DB with Calculated UTC for IST Midnight
+            "completedBy.completedAt": { $gte: startDate } 
+        }},
+        { $group: {
+            // Mongo handles the IST conversion here perfectly
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$completedBy.completedAt", timezone: "Asia/Kolkata" } },
+            count: { $sum: 1 }
+        }},
+        { $sort: { _id: 1 } }
     ]);
-    return dailyCompletions;
+
+    // Transform to Map
+    const activityMap = {};
+    rawData.forEach(item => {
+        activityMap[item._id] = item.count;
+    });
+
+    // Fill gaps
+    const dateList = getLastXDaysDates(days);
+    
+    const filledData = dateList.map(date => ({
+        date: date,
+        count: activityMap[date] || 0
+    }));
+
+    return filledData;
 }
 
 async function getGroupPerformance(userId){
@@ -64,21 +123,22 @@ async function getDashboardData(req, res){
     const userId = new mongoose.Types.ObjectId(req.user.id);
     try{
         // Use promise.all to run all queries in parallel
-        const [user, mainStats, streakGraphData, heatmapData, groupPerformance]
+        const [user, mainStats, heatmapData, groupPerformance]
         = await Promise.all([
             User.findById(userId).select("streak").lean(),
             getMainStats(userId),
-            getDailyCompletions(userId, 7),
-            getDailyCompletions(userId, 90),
+            getActivityData(userId, 90),
             getGroupPerformance(userId)
         ]);
+
+        const last7Days = heatmapData.slice(-7);
 
         return res.status(200).json({
             stats: {
                 currentStreak : user.streak,
                 ...mainStats    // combining the main stats with current streak
             },
-            streakGraph : streakGraphData,
+            streakGraph : last7Days,
             heatmap : heatmapData,
             groupPerformance
         })
