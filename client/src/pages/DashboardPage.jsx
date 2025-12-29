@@ -4,7 +4,8 @@ import { getDashboardData } from "../api/dashboardService";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
          PieChart, Pie, Cell, Legend } 
 from 'recharts';
-import './DashboardPage.css'
+import './DashboardPage.css';
+import { toast } from "react-toastify";
 
 const DashboardPage = () => {
     const { user } = useContext(AuthContext);
@@ -22,7 +23,9 @@ const DashboardPage = () => {
                 setError(null);
             }
             catch(err){
-                setError(err.message);
+                console.error(err);
+                setError(err.message || "Failed to load dashboard.");
+                toast.error("Could not load latest data.");
             }
             finally{
                 setLoading(false);      // loading finished
@@ -34,6 +37,7 @@ const DashboardPage = () => {
 
     if (loading) return <div className="loading-state">Loading Analytics...</div>;
     if (error) return <div className="error-state">Error: {error}</div>;
+    if(!data) return null;
 
     // PIE Chart Colors
     const COLORS = ['#EF4444', '#F97316', '#EAB308', '#22C55E', '#3B82F6', '#A855F7'];

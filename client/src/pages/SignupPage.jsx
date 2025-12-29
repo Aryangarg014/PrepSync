@@ -2,12 +2,12 @@ import React, { useState, useContext } from 'react';
 import { signupUser } from '../api/authService';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const { login } = useContext(AuthContext);
@@ -15,7 +15,6 @@ const SignupPage = () => {
 
     async function handleSubmit(e){
         e.preventDefault();     // prevent default form submission
-        setError(null);
         setLoading(true);
         try{
             const responseData = await signupUser({ name, email, password });
@@ -23,12 +22,12 @@ const SignupPage = () => {
 
             login(responseData.user, responseData.token);       // saves {user, token} to localStorage
 
-            // alert("Signup successful!");
+            toast.success("Account created successfully! 🎉");
             navigate("/dashboard");
         }
         catch(err){
             console.error("Signup failed.", err.message);
-            setError(err.message);
+            toast.error(err.message || "Signup failed");
         }
         finally{
             setLoading(false);
@@ -66,9 +65,6 @@ const SignupPage = () => {
                         required
                     />
                 </div>
-                
-                {/* Show error message if it exists */}
-                {error && <p style={{ color: 'red' }}> {error} </p>}
 
                 {/* if loading then disable submit button */}
                 <button type="submit" disabled={loading}>

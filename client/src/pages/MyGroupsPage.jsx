@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createGroup, getUserGroups, joinGroup } from "../api/groupService";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MyGroupsPage = () => {
     // State for the list of groups
@@ -11,10 +12,8 @@ const MyGroupsPage = () => {
     // State for the "Create New Group" form
     const [newGroupName, setNewGroupName] = useState("");
     const [newGroupDesc, setNewGroupDesc] = useState("");
-    const [formError, setFormError] = useState(null);
 
     const [groupIdToJoin, setGroupIdToJoin] = useState("");
-    const [joinFormError, setJoinFormError] = useState(null);
 
     async function fetchGroups(){
         try{
@@ -24,7 +23,7 @@ const MyGroupsPage = () => {
             setError(null);
         }
         catch(err){
-            setError(err.message);
+            setError(err.message || "Failed to load groups.");
         }
         finally{
             setLoading(false);
@@ -37,14 +36,13 @@ const MyGroupsPage = () => {
 
     async function handleCreateGroup(e){
         e.preventDefault();
-        setFormError(null);
-
         try{
             const newGroupData = {
                 name : newGroupName,
                 description : newGroupDesc
             };
             await createGroup(newGroupData);
+            toast.success("Group created successfully!");
 
             setNewGroupName("");
             setNewGroupDesc("");
@@ -52,26 +50,23 @@ const MyGroupsPage = () => {
             await fetchGroups();
         }
         catch(err){
-            setFormError(err.message);
+            toast.error(err.message || "Failed to create group");
         }
     }
 
     async function handleJoinGroup(e){
         e.preventDefault();
-        setJoinFormError(null);
-
-        if(!groupIdToJoin){
-            setJoinFormError("Group Id is required.");
-            return;
-        }
+        if(!groupIdToJoin) return;
 
         try{
             await joinGroup(groupIdToJoin);
+            toast.success("Joined group successfully!");
+
             setGroupIdToJoin("");
             await fetchGroups();
         }
         catch(err){
-            setJoinFormError(err.message);
+            toast.error(err.message || "Failed to join group");
         }
     }
 
@@ -109,7 +104,6 @@ const MyGroupsPage = () => {
                     </div>
                     
                     <button type="submit">Create Group</button>
-                    {formError && <p style={{color : "red"}}>{ formError }</p>}
                 </form>
             </div>
 
@@ -127,7 +121,6 @@ const MyGroupsPage = () => {
                         />
                     </div>
                     <button type="submit">Join Group</button>
-                    {joinFormError && <p style={{color : "red"}}>{ joinFormError }</p>}
                 </form>
             </div>
 

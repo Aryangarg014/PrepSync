@@ -6,6 +6,7 @@ import GoalItem from "../components/GoalItem";
 import { addResource, deleteResource, getGroupResources } from "../api/resourceService";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const GroupDetailsPage = () => {
     const { id } = useParams();     // Group Id
@@ -20,14 +21,13 @@ const GroupDetailsPage = () => {
 
     const [goalTitle, setGoalTitle] = useState("");
     const [goalDesc, setGoalDesc] = useState("");
-    const [goalCreationError, setGoalCreationError] = useState(null);
+    const [goalDueDate, setGoalDueDate] = useState("");
 
     const [resources, setResources] = useState([]);
     const [resourceType, setResourceType] = useState("link");
     const [resLink, setResLink] = useState("");
     const [resFile, setResFile] = useState(null);
     const [resTitle, setResTitle] = useState("");
-    const [resError, setResError] = useState(null);
 
     const fetchAllData = async () => {
         try{
@@ -50,7 +50,7 @@ const GroupDetailsPage = () => {
             setError(null);
         }
         catch(err){
-            setError(err.message);
+            setError(err.message || "Failed to load group details.");
         }
         finally{
             setLoading(false);
@@ -69,7 +69,7 @@ const GroupDetailsPage = () => {
                 calculateLeaderboard(group.members, filteredGoals);
             }
         } catch (err) {
-            console.error("Failed to refresh goals", err.message);
+            console.error("Failed to refresh goals", err);
         }
     };
 
@@ -79,7 +79,7 @@ const GroupDetailsPage = () => {
             setResources(resourceData);
         }
         catch(err){
-            console.error("Failed to refresh resources", err.message);
+            console.error("Failed to refresh resources", err);
         }
     };
 
@@ -116,28 +116,29 @@ const GroupDetailsPage = () => {
 
     const handleCreateGoal = async (e) => {
         e.preventDefault();
-        setGoalCreationError(null);
         try{
             const newGoal = {
                 title : goalTitle,
                 description : goalDesc,
-                groupId : id
+                groupId : id,
+                dueDate : goalDueDate || null
             }
             await createGoal(newGoal);
-
+            toast.success("Group goal created!");
+            
             setGoalTitle("");
             setGoalDesc("");
+            setGoalDueDate("");
 
             await refreshGoalsOnly();
         }
         catch(err){
-            setGoalCreationError(err.message);
+            toast.error(err.message || "Failed to create goal");
         }
     }
 
     const handleAddResource = async (e) => {
         e.preventDefault();
-        setResError(null);
         try{
             const formData = new FormData();
             formData.append("title", resTitle);
@@ -151,6 +152,7 @@ const GroupDetailsPage = () => {
                 formData.append("resourceFile", resFile);
             }
             await addResource(formData);
+            toast.success("Resource shared successfully!");
 
             setResTitle("");
             setResLink("");
@@ -158,7 +160,7 @@ const GroupDetailsPage = () => {
             await refreshResources();
         }
         catch(err){
-            setResError(err.message);
+            toast.error(err.message || "Unable to share resource");
         }
     }
 
@@ -167,10 +169,12 @@ const GroupDetailsPage = () => {
             return;
         try{
             await deleteResource(resourceId, id);
+            toast.success("Resource deleted");
             await refreshResources();
         }
         catch(err){
-            alert(err.message);
+            console.error("Failed to delete resource", err);
+            toast.error("Failed to delete resource");
         }
     }
 
@@ -189,7 +193,7 @@ const GroupDetailsPage = () => {
     const handleDownload = async (resource) => {
         try {
             const token = localStorage.getItem("token");
-
+            toast.info("Downloading...");
             const response = await axios.get(
               `http://localhost:8080/resources/download/${resource._id}`,
               {
@@ -213,10 +217,11 @@ const GroupDetailsPage = () => {
             // Cleanup
             a.remove();
             window.URL.revokeObjectURL(url);
+            toast.success("Download completed");
         }
-        catch (error) {
-            console.error("Download failed:", error);
-            alert("Failed to download file");
+        catch (err) {
+            console.error("Download failed:", err);
+            toast.error("Unable to download file");
         }
     };
 
@@ -299,11 +304,16 @@ const GroupDetailsPage = () => {
                             placeholder="Description (optional)"
                             value={goalDesc}
                             onChange={(e) => setGoalDesc(e.target.value)}
+                            style={{ marginRight: "0.5rem" }}
+                        />
+                        <input
+                            type="date"
+                            value={goalDueDate}
+                            onChange={(e) => setGoalDueDate(e.target.value)}   
                         />
                     </div>
 
                     <button type="submit">Create Group Goal</button>
-                    {goalCreationError && <p style={{ color : "red" }}>{goalCreationError}</p>}
                 </form>
             </div>
             
@@ -374,7 +384,6 @@ const GroupDetailsPage = () => {
                     <button type="submit">
                         {resourceType === "link" ? "Add link" : "Upload File"}
                     </button>
-                    {resError && <p style={{ color : "red" }}> {resError} </p>}
                 </form>
             </div>
 

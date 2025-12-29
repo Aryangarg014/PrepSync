@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { getUserGoals, createGoal } from "../api/goalService";
 import GoalItem from "../components/GoalItem";
+import { toast } from "react-toastify";
 
 const MyGoalsPage = () => {
     // state for the getUserGoals
@@ -13,7 +14,6 @@ const MyGoalsPage = () => {
     const [newGoalTitle, setNewGoalTitle] = useState('');
     const [newGoalDesc, setNewGoalDesc] = useState('');
     const [newGoalDueDate, setNewGoalDueDate] = useState('');
-    const [formError, setFormError] = useState(null);
 
     async function fetchGoals(){
         try{
@@ -38,8 +38,6 @@ const MyGoalsPage = () => {
     // handle form submit
     async function handleCreateGoal(e){
         e.preventDefault();
-        setFormError(null);
-
         try{
             // groupId is null as it is a personal goal
             const newGoal = {
@@ -48,7 +46,8 @@ const MyGoalsPage = () => {
                 dueDate : newGoalDueDate || null
             }
             await createGoal(newGoal);
-            
+            toast.success("Personal goal created!");
+
             setNewGoalTitle("");
             setNewGoalDesc("");
             setNewGoalDueDate("");
@@ -56,7 +55,7 @@ const MyGoalsPage = () => {
             await fetchGoals();     // refresh the goals
         }
         catch(err){
-            setFormError(err.message);
+            toast.error(err.message || "Failed to create goal");
         }
     }
 
@@ -102,7 +101,6 @@ const MyGoalsPage = () => {
                     </div>
                     
                     <button type="submit">Create Goal</button>
-                    { formError && <p style={{ color : "red" }}>{formError}</p> }
                 </form>
             </div>
 
