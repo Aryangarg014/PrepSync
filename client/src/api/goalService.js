@@ -30,6 +30,16 @@ export async function markGoalComplete(goalId){
     }
 }
 
+export async function updateGoal(goalId, goalData){
+    try{
+        const response = await apiClient.patch(`goals/${goalId}`, goalData);
+        return response.data;   // { message, goal }
+    }
+    catch(error){
+        throw new Error(error.response?.data?.message || "Failed to update goal");
+    }
+}
+
 export async function deleteGoal(goalId){
     try{
         const response = await apiClient.delete(`/goals/${goalId}`);

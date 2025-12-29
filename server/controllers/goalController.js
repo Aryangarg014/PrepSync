@@ -10,8 +10,8 @@ async function createGoal(req, res){
             return res.status(400).json( { message : "Title is required." } );
         }
 
-        if(dueDate && new Date(dueDate) <= new Date()){
-            return res.status(400).json( { message : "The due date for goal should be in future." } );
+        if(dueDate && new Date(dueDate) < new Date().setHours(0,0,0,0)){
+            return res.status(400).json( { message : "The due date cannot be in the past." } );
         }
         
         const newGoal = new Goal({
@@ -164,13 +164,20 @@ async function markGoalComplete(req, res){
             return res.status(400).json( { message : "You have already completed this goal." } );
         }
 
-        if(!goal.dueDate || (goal.dueDate && new Date() <= goal.dueDate)){
-            goal.completedBy.push({user : userId, status : "on-time"});
+        const completionDay = new Date();
+        completionDay.setHours(0,0,0,0);
+        const dueDay = goal.dueDate ? new Date(goal.dueDate) : null;
+        if(dueDay) dueDay.setHours(0,0,0,0)
+
+        let status = "on-time";
+        if(dueDay && completionDay > dueDay){
+            status = "late";
         }
-        else{
-            goal.completedBy.push({user : userId, status : "late"});
-        }
-        await goal.save();
+        goal.completedBy.push({
+            user : userId,
+            status : status,
+            completedAt : new Date()
+        })
 
         // STREAK
         const user = await User.findById(userId);
@@ -293,14 +300,43 @@ async function updateGoal(req, res){
         if(title && title.trim() !== ""){
             goal.title = title;
         }
-        if(description && description.trim() !== ""){
+        if(description !== undefined){
             goal.description = description;
         }
-        if(dueDate){
-            if(new Date(dueDate) <= new Date()){
-                return res.status(400).json( { message : "The due date for goal should be in future." } )
+        
+        if(dueDate === null || dueDate === ""){
+            goal.dueDate = null;
+
+            goal.completedBy.forEach((entry) => {
+                entry.status = "on-time";
+            });
+        }
+        else if(dueDate){
+            const newDueDate = new Date(dueDate);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            if(newDueDate < today){
+                return res.status(400).json( { message : "The due date cannot be in the past." } );
             }
-            goal.dueDate = dueDate;
+            goal.dueDate = newDueDate;
+
+            // Recalculate Statuses
+            const newDueDay = new Date(newDueDate);
+            newDueDay.setHours(0,0,0,0);
+
+            goal.completedBy.forEach((entry) => {
+                const completionDay = new Date(entry.completedAt);
+                completionDay.setHours(0,0,0,0);
+                if(completionDay <= newDueDay){
+                    entry.status = "on-time";
+                }
+                else{
+                    entry.status = "late";
+                }
+            });
+            await goal.save();
+            return res.status(200).json({ message : "Goal updated successfully.", goal });
         }
 
         await goal.save();

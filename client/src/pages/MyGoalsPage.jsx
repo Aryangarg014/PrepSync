@@ -12,6 +12,7 @@ const MyGoalsPage = () => {
     // State for the createGoal (form)
     const [newGoalTitle, setNewGoalTitle] = useState('');
     const [newGoalDesc, setNewGoalDesc] = useState('');
+    const [newGoalDueDate, setNewGoalDueDate] = useState('');
     const [formError, setFormError] = useState(null);
 
     async function fetchGoals(){
@@ -43,12 +44,14 @@ const MyGoalsPage = () => {
             // groupId is null as it is a personal goal
             const newGoal = {
                 title : newGoalTitle,
-                description : newGoalDesc
+                description : newGoalDesc,
+                dueDate : newGoalDueDate || null
             }
             await createGoal(newGoal);
             
             setNewGoalTitle("");
             setNewGoalDesc("");
+            setNewGoalDueDate("");
 
             await fetchGoals();     // refresh the goals
         }
@@ -89,6 +92,15 @@ const MyGoalsPage = () => {
                             onChange={(e) => setNewGoalDesc(e.target.value)}
                         />
                     </div>
+                    <div style={{marginBottom : "1rem"}}>
+                        <label>Due Date:</label>
+                        <input
+                            type="date"
+                            value={newGoalDueDate}
+                            onChange={(e) => setNewGoalDueDate(e.target.value)}   
+                        />
+                    </div>
+                    
                     <button type="submit">Create Goal</button>
                     { formError && <p style={{ color : "red" }}>{formError}</p> }
                 </form>
