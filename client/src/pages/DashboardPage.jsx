@@ -56,7 +56,7 @@ const DashboardPage = () => {
 
     // HEATMAP COLORS
     const getHeatmapColor = (count) => {
-        if (count === 0) return '#f3f4f6'; // Gray (Empty)
+        if (count === 0) return '#e5e7eb'; // Gray (Empty)
         if (count === 1) return '#a2f8c0ff'; // Very Light Green
         if (count === 2) return '#43da7aff'; // Light Green
         if (count === 3) return '#16a34a'; // Medium Green
@@ -105,7 +105,13 @@ const DashboardPage = () => {
                         <ResponsiveContainer>
                             <BarChart data={data.streakGraph}>
                                 <CartesianGrid strokeDasharray="3 3"/>
-                                <XAxis dataKey="date"/>
+                                <XAxis
+                                    dataKey="date"
+                                    angle={-30}
+                                    textAnchor="end"
+                                    height={60}
+                                />
+
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
                                 <Bar dataKey="count" fill="#8884d8" name="Goals Completed"/>
@@ -144,7 +150,7 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            <div className="heatmap-section">
+            <div className="heatmap-section chart-card">
                 <h3>Consistency (Last 90 Days)</h3>
                 <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '15px' }}>
                     Every Square is a day. The darker the green, the more goals you completed!

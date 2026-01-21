@@ -14,7 +14,11 @@ const LogoutButton = () => {
     };
     
     return (
-        <button onClick={ handleLogout } style={{ backgroundColor : "red", color : "white", cursor : "pointer"}}>
+        <button
+            onClick={ handleLogout }
+            className="btn btn-danger" 
+            style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }} // Slight override for navbar size
+        >
             Logout
         </button>
     );

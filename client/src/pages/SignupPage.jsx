@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { signupUser } from '../api/authService';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import './Auth.css';
 
 const SignupPage = () => {
     const [name, setName] = useState("");
@@ -35,42 +36,55 @@ const SignupPage = () => {
     }
 
     return (
-        <div style = {{padding : '2rem'}}>
-            <h2>Signup</h2>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label>Name:</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange ={(e) => { setName(e.target.value); }}
-                        required
-                    />
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value); }}
-                        required
-                    />
-                </div>
-                <div style={{ marginBottom: '1rem' }}>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => { setPassword(e.target.value); }}
-                        required
-                    />
-                </div>
+        <div className="auth-container">
+            <div className="auth-card">
+                <h2 className="auth-title">Create Account</h2>
+                
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label className="form-label">Full Name</label>
+                        <input
+                            className="form-input"
+                            type="text"
+                            value={name}
+                            onChange ={(e) => { setName(e.target.value); }}
+                            required
+                            placeholder="John Doe"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label className="form-label">Email</label>
+                        <input
+                            className="form-input"
+                            type="email"
+                            value={email}
+                            onChange={(e) => { setEmail(e.target.value); }}
+                            required
+                            placeholder="you@example.com"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <input
+                            className="form-input"
+                            type="password"
+                            value={password}
+                            onChange={(e) => { setPassword(e.target.value); }}
+                            required
+                            placeholder="Create a strong password"
+                        />
+                    </div>
 
-                {/* if loading then disable submit button */}
-                <button type="submit" disabled={loading}>
-                    {loading ? "Signing up..." : "Signup"}
-                </button>
-            </form>
+                    {/* If loading, disable the submit button. */}
+                    <button type="submit" disabled={loading} className="auth-btn">
+                        {loading ? "Creating Account..." : "Sign Up"}
+                    </button>
+                </form>
+
+                <div className="auth-footer">
+                    Already have an account? <Link to="/login">Login</Link>
+                </div>
+            </div>
         </div>
     );
 }

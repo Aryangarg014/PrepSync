@@ -133,9 +133,42 @@ async function getDashboardData(req, res){
 
         const last7Days = heatmapData.slice(-7);
 
+        // Streak Validation Logic
+
+        // 1. Get "Now" and shift it to IST
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000; // +5 hours 30 mins
+        const todayIST = new Date(now.getTime() + istOffset);
+        
+        // 2. Normalize to Midnight (00:00:00) so we compare Dates, not Times
+        todayIST.setUTCHours(0, 0, 0, 0);
+
+        // 3. Define "Yesterday" based on Today (IST)
+        const yesterdayIST = new Date(todayIST);
+        yesterdayIST.setDate(todayIST.getDate() - 1);
+
+        let currentStreak = user.streak;
+
+        if(user.lastCompletedDate) {
+            // This date was ALREADY saved as IST in markGoalComplete function
+            const lastDate = new Date(user.lastCompletedDate);
+            
+            if (lastDate < yesterdayIST) {
+                currentStreak = 0;
+
+                if (user.streak !== 0) {
+                    user.streak = 0;
+                    await user.save();
+                }
+            }
+        }
+        else{      // never completed a goal
+            currentStreak = 0;
+        }
+        
         return res.status(200).json({
             stats: {
-                currentStreak : user.streak,
+                currentStreak : currentStreak,
                 ...mainStats    // combining the main stats with current streak
             },
             streakGraph : last7Days,

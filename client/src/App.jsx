@@ -4,6 +4,7 @@ import { AuthContext } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import {Route, Routes, Link} from 'react-router-dom';
 
+import './App.css';
 // --- TOAST IMPORTS ---
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,22 +29,24 @@ function App(){
 
       <ToastContainer position="top-right" autoClose={3000} />
       
-      <nav style={{ padding: '1rem', background: "#faf9f6" }}>
-        <Link to="/" style={{ marginRight: '1rem' }}> Home </Link>
+      <nav className="navbar">
+        <Link to="/" className="nav-brand"> PrepSync </Link>
 
-        {isAuthenticated ? (
-          <>
-            <Link to="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
-            <Link to="/my-goals" style={{ marginRight: '1rem' }}>My Goals</Link>
-            <Link to="/my-groups" style={{ marginRight: '1rem' }}>My Groups</Link>
-            <LogoutButton />
-          </>
-        ) : (
-          <>
-            <Link to="/login" style={{ marginRight: '1rem' }}>Login</Link>
-            <Link to="/signup">Signup</Link>
-          </>
-        )}
+        <div className="nav-links">
+          {isAuthenticated ? (
+            <>
+              <Link to="/dashboard" className="nav-item">Dashboard</Link>
+              <Link to="/my-goals" className="nav-item">Goals</Link>
+              <Link to="/my-groups" className="nav-item">Groups</Link>
+              <LogoutButton />
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="nav-item">Login</Link>
+              <Link to="/signup" className="btn btn-primary">Get Started</Link>
+            </>
+          )}
+        </div>
       </nav>
 
 
