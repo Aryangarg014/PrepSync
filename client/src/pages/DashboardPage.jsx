@@ -54,6 +54,8 @@ const DashboardPage = () => {
         })
     }
 
+    const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
     // HEATMAP COLORS
     const getHeatmapColor = (count) => {
         if (count === 0) return '#e5e7eb'; // Gray (Empty)
@@ -150,22 +152,56 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            <div className="heatmap-section chart-card">
-                <h3>Consistency (Last 90 Days)</h3>
-                <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '15px' }}>
-                    Every Square is a day. The darker the green, the more goals you completed!
+        <div className="chart-card heatmap-card">
+            <h3>Consistency (Last 1 Year)</h3>
+            <p className="heatmap-subtitle">
+                Each column is a week · Darker means more goals
                 </p>
-                <div className="heatmap-grid">
-                    { data.heatmap.map((day, index) => (
-                        <div 
-                            key={index}
-                            className="heatmap-cell"
-                            style={{ backgroundColor : getHeatmapColor(day.count)}}
-                            data-tooltip={`${day.date}: ${day.count} goals completed`}
-                        />
-                    )) }
+
+            {/* Month Labels */}
+            <div className="heatmap-grid-container">
+                <div className="month-labels">
+                    {
+                        data.heatmap.map((week, i) => {
+                        const date = new Date(week[0].date);
+                        return date.getDate() <= 7 ? (
+                            <span key={i}>{date.toLocaleString("en", { month: "short" })}</span>
+                        ) : (
+                            <span key={i}></span>
+                        );
+                    })}
+                </div>
+
+                <div className="heatmap-wrapper">
+                  <div className="weekday-labels">
+                    {WEEKDAYS.map(d => <span key={d}>{d}</span>)}
+                  </div>
+
+                  <div className="heatmap-grid">
+                    {data.heatmap.map((week, wi) => (
+                      <div className="heatmap-column" key={wi}>
+                        {week.map((day, di) => {
+                            const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric"
+                            }).format(new Date(day.date + "T00:00:00+05:30"));
+                            return (
+                              <div
+                                key={di}
+                                className="heatmap-cell"
+                                style={{ backgroundColor: getHeatmapColor(day.count) }}
+                                data-tooltip={`${formattedDate} • ${day.count} goals`}
+
+                              />
+                            );
+                        })}
+                      </div>
+                    ))}
+                   </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 }

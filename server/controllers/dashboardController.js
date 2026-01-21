@@ -118,20 +118,101 @@ async function getGroupPerformance(userId){
     return groupPerformance;
 }
 
+// Get Monday of the week for a given date (IST-safe)
+function getWeekStartMonday(date) {
+    const d = new Date(date);
+    const day = d.getDay(); // 0=Sun, 1=Mon
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+function formatISTDate(date) {
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const istDate = new Date(date.getTime() + istOffset);
+    return istDate.toISOString().split("T")[0];
+}
+
+function getDateRange(start, end) {
+    const dates = [];
+    const current = new Date(start);
+
+    while (current <= end) {
+        dates.push(formatISTDate(current));
+        current.setDate(current.getDate() + 1);
+    }
+    return dates;
+}
+
+
+// Group into weeks (7 days per column)
+function groupIntoWeeks(days) {
+    const weeks = [];
+    for (let i = 0; i < days.length; i += 7) {
+        weeks.push(days.slice(i, i + 7));
+    }
+    return weeks;
+}
+
+async function getYearlyHeatmap(userId) {
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setHours(0, 0, 0, 0);
+
+    const startDate = new Date(endDate);
+    startDate.setFullYear(startDate.getFullYear() - 1);
+
+    const alignedStart = getWeekStartMonday(startDate);
+
+    const rawData = await Goal.aggregate([
+        { $unwind: "$completedBy" },
+        {
+            $match: {
+                "completedBy.user": userId,
+                "completedBy.completedAt": { $gte: alignedStart }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    $dateToString: {
+                        format: "%Y-%m-%d",
+                        date: "$completedBy.completedAt",
+                        timezone: "Asia/Kolkata"
+                    }
+                },
+                count: { $sum: 1 }
+            }
+        }
+    ]);
+
+    const activityMap = {};
+    rawData.forEach(d => activityMap[d._id] = d.count);
+
+    const allDates = getDateRange(alignedStart, endDate);
+
+    const filledDays = allDates.map(date => ({
+        date,
+        count: activityMap[date] || 0
+    }));
+
+    return groupIntoWeeks(filledDays);
+}
+
 
 async function getDashboardData(req, res){
     const userId = new mongoose.Types.ObjectId(req.user.id);
     try{
         // Use promise.all to run all queries in parallel
-        const [user, mainStats, heatmapData, groupPerformance]
+        const [user, mainStats, heatmap, streakGraph, groupPerformance]
         = await Promise.all([
-            User.findById(userId).select("streak").lean(),
+            User.findById(userId).select("streak lastCompletedDate"),
             getMainStats(userId),
-            getActivityData(userId, 90),
+            getYearlyHeatmap(userId),
+            getActivityData(userId, 7),
             getGroupPerformance(userId)
         ]);
-
-        const last7Days = heatmapData.slice(-7);
 
         // Streak Validation Logic
 
@@ -171,8 +252,8 @@ async function getDashboardData(req, res){
                 currentStreak : currentStreak,
                 ...mainStats    // combining the main stats with current streak
             },
-            streakGraph : last7Days,
-            heatmap : heatmapData,
+            streakGraph,
+            heatmap,
             groupPerformance
         })
     }

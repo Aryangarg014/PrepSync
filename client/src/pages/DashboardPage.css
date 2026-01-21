@@ -93,51 +93,90 @@
 }
 
 /* ======= HEATMAP ======= */
-.heatmap-section {
+
+.heatmap-card {
   margin-top: 3rem;
 }
 
-.heatmap-section h3 {
-  margin-bottom: 0.3rem;
+.heatmap-subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.8rem;
 }
 
+/* ===== Heatmap layout controller ===== */
+
+.heatmap-grid-container {
+  width: 100%;
+}
+
+/* Month labels */
+.month-labels {
+  display: grid;
+  grid-template-columns: repeat(53, 1fr);
+  gap: 4px;
+  margin-left: 42px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Wrapper: weekdays + grid */
+.heatmap-wrapper {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 6px;
+}
+
+/* Weekday labels */
+.weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Heatmap grid */
 .heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 18px);
-  gap: 6px;
-  margin-top: 1rem;
+  grid-template-columns: repeat(53, 1fr);
+  gap: 4px;
 }
 
+/* Each week column */
+.heatmap-column {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 4px;
+}
+
+/* Cells auto-scale */
 .heatmap-cell {
-  position: relative;
-  width: 18px;
-  height: 18px;
+  width: 100%;
+  aspect-ratio: 1 / 1;   /* ⭐ KEY LINE */
   border-radius: 3px;
-  cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.12s ease, outline 0.12s ease;
+  position: relative;
 }
 
-.heatmap-cell:hover {
-  transform: scale(1.15);
-}
-
-/* Tooltip */
+/* Tooltip box */
 .heatmap-cell::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #1f2937;
+  background-color: #111827;
   color: #ffffff;
   padding: 6px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 14px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 10;
+  transition: opacity 0.08s ease-in;
+  z-index: 50;
 }
 
 /* Tooltip arrow */
@@ -147,15 +186,15 @@
   bottom: 115%;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 6px;
+  border-width: 5px;
   border-style: solid;
-  border-color: #1f2937 transparent transparent transparent;
+  border-color: #111827 transparent transparent transparent;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.08s ease-in;
 }
 
+/* Show instantly on hover */
 .heatmap-cell:hover::after,
 .heatmap-cell:hover::before {
   opacity: 1;
 }
-
