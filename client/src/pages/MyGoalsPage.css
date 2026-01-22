@@ -1,0 +1,360 @@
+/* ===== Page ===== */
+.goals-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.goals-page > h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== Shared Card ===== */
+.card {
+  background: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+}
+
+/* ===== Create Goal Card ===== */
+.create-goal-card {
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.create-goal-card h3 {
+  margin-bottom: 1.25rem;
+}
+
+.create-goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-row-top {
+  display: grid;
+  grid-template-columns: 1fr 0.75fr;
+  gap: 3rem;
+}
+
+.form-row-bottom {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  align-items: flex-end;
+}
+
+.form-row-bottom .form-field-description {
+  grid-column: 1;
+}
+
+.form-row-bottom .btn-create-goal {
+  grid-column: 2;
+  align-self: flex-end;
+}
+
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.form-field label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 50px;
+  height: 60px;
+}
+
+.form-field-description {
+  flex: 1;
+}
+
+.btn-create-goal {
+  height: fit-content;
+  padding: 0.75rem 2rem !important;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #2563eb !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+.btn-create-goal:hover {
+  background: #1d4ed8 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+}
+
+
+/* ===== Sections ===== */
+.goals-section {
+  border: 1px solid var(--border);
+}
+
+.goals-section h2 {
+  margin: 0 0 1.25rem 0;
+  color: var(--text-main);
+  padding-bottom: 0.75rem;
+}
+
+/* ===== Goals List ===== */
+.goals-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* ===== Goal Card Layout ===== */
+.goal-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.goal-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary);
+  border-radius: 8px 0 0 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.goal-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.goal-card:hover::before {
+  opacity: 1;
+}
+
+.goal-card.completed {
+  background: linear-gradient(to right, #ecfdf5, #ffffff);
+  border-color: var(--success);
+}
+
+.goal-card.completed::before {
+  background: var(--success);
+  opacity: 1;
+}
+
+/* ===== Left Content ===== */
+.goal-left h4 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.goal-left p {
+  margin: 0 0 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.goal-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.goal-meta .overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* ===== Right Actions ===== */
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.goal-actions .btn {
+  white-space: nowrap;
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.goal-actions .btn-success:hover:not(:disabled) {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.goal-actions .btn-outline:hover:not(:disabled) {
+  background-color: var(--bg-main);
+  border-color: var(--secondary);
+}
+
+.goal-actions .btn-danger:hover:not(:disabled) {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== Error ===== */
+.goal-error {
+  color: var(--danger);
+  margin-top: 0.5rem;
+}
+
+/* ===== Edit Mode ===== */
+.goal-card.edit-mode {
+  background: var(--bg-card);
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.75rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-row-top {
+  display: grid;
+  grid-template-columns: 1fr 0.75fr;
+  gap: 3rem;
+}
+
+.edit-row-bottom {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  align-items: flex-end;
+}
+
+.edit-row-bottom .edit-field-description {
+  grid-column: 1;
+}
+
+.edit-row-bottom .edit-actions {
+  grid-column: 2;
+  align-self: flex-end;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.edit-field label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.edit-field input,
+.edit-field textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.edit-field input:focus,
+.edit-field textarea:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.edit-field textarea {
+  resize: vertical;
+  min-height: 50px;
+  height: 60px;
+}
+
+.edit-field-description {
+  flex: 1;
+}
+
+.edit-actions .btn {
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-save-changes {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.btn-save-changes:hover:not(:disabled) {
+  background: var(--primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+}

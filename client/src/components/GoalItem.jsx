@@ -84,34 +84,47 @@ const GoalItem = ({ goal, onGoalUpdate }) => {
 
     if(isEditing){      // Edit Mode
         return (
-            <li>
-                <form onSubmit={handleUpdate}>
-                    <input
-                        type="text"
-                        value={editTitle}
-                        onChange={(e) => setEditTitle(e.target.value)}
-                        required
-                    />
-                    <input
-                        type="text"
-                        value={editDesc}
-                        onChange={(e) => setEditDesc(e.target.value)}
-                        placeholder='Description'
-                    />
-                    <input
-                        type="date"
-                        value={editDueDate}
-                        onChange={(e) => setEditDueDate(e.target.value)}
-                    />
-                    <div style={{marginTop : "10px"}}>
-                        <button type='submit' disabled={loading}>
-                            {loading ? "Saving..." : "Save"}
-                        </button>
-                        <button onClick={handleCancelEdit}>
-                            Cancel
-                        </button>
+            <li className='goal-card edit-mode'>
+                <form className="edit-form" onSubmit={handleUpdate}>
+                    <div className="edit-row-top">
+                        <div className="edit-field">
+                            <label>Title</label>
+                            <input
+                                type="text"
+                                value={editTitle}
+                                onChange={(e) => setEditTitle(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="edit-field">
+                            <label>Due Date:</label>
+                            <input
+                                type="date"
+                                value={editDueDate}
+                                onChange={(e) => setEditDueDate(e.target.value)}
+                            />
+                        </div>
                     </div>
-                    {error && <p style={{color: 'red'}}>{error}</p>}
+                    
+                    <div className="edit-row-bottom">
+                        <div className="edit-field edit-field-description">
+                            <label>Description</label>
+                            <textarea
+                                value={editDesc}
+                                onChange={(e) => setEditDesc(e.target.value)}
+                                placeholder='Description'
+                            />
+                        </div>
+                        <div className="edit-actions">
+                            <button className="btn btn-save-changes" type='submit' disabled={loading}>
+                                {loading ? "Saving..." : "Save Changes"}
+                            </button>
+                            <button className="btn btn-outline" type="button" onClick={handleCancelEdit}>
+                                ✕ Cancel
+                            </button>
+                        </div>
+                    </div>
+                    {error && <p className="goal-error">{error}</p>}
                 </form>
             </li>
         );
@@ -123,43 +136,52 @@ const GoalItem = ({ goal, onGoalUpdate }) => {
 
     // View Mode
     return (
-        <li style={{  backgroundColor: isCompletedByUser ? '#d4edda' : '#fff' }}>
-            <div>
-                <div>
-                    <h4>{goal.title}</h4>
-                    <p>{goal.description}</p>
-                    {/* Show group name if it's a group goal */}
-                    {goal.group && <small>Group: {goal.group.name}</small>}
-                    {goal.dueDate && 
-                        <small>
-                            Due : {new Date(goal.dueDate).toLocaleDateString()}
-                            {isOverdue(goal.dueDate) && !isCompletedByUser && " (Overdue)"}
-                        </small>
-                    }
-                </div>
+        <li className={`goal-card ${isCompletedByUser ? "completed" : ""}`}>
+            
+            <div className="goal-left">
+                <h4>{goal.title}</h4>
 
-                <div>
-                    <button
-                        onClick={handleComplete}
-                        disabled={loading || isCompletedByUser}     // if loading or already completed disable
-                    >
-                        {loading ? "Loading..." : (isCompletedByUser ? "✓ Completed" : "Mark as Complete")}
-                    </button>
+                {goal.description && <p>{goal.description}</p>}
 
-                    <button onClick={() => setIsEditing(true)} disabled={loading} >
-                        Edit
-                    </button>
+                <div className="goal-meta">
+                    {goal.group && <span>Group: {goal.group.name}</span>}
 
-                    <button
-                        onClick={handleDelete}
-                        disabled={loading}
-                    >
-                        {loading ? "Deleting..." : "Delete"}
-                    </button>
+                    {goal.dueDate && (
+                        <span className={isOverdue(goal.dueDate) && !isCompletedByUser ? "overdue" : ""}>
+                            Due: {new Date(goal.dueDate).toLocaleDateString()}
+                        </span>
+                    )}
                 </div>
             </div>
+
+            <div className="goal-actions">
+                <button
+                    className="btn btn-success"
+                    onClick={handleComplete}
+                    disabled={loading || isCompletedByUser}
+                >
+                {isCompletedByUser ? "✓ Completed" : "Mark Complete"}
+                </button>
+
+                <button
+                    className="btn btn-outline"
+                    onClick={() => setIsEditing(true)}
+                    disabled={loading}
+                >
+                    Edit
+                </button>
+
+                <button
+                    className="btn btn-danger"
+                    onClick={handleDelete}
+                    disabled={loading}
+                >
+                    Delete
+                </button>
+            </div>
             
-            {error && <p style={{color : "red"}}>{error}</p>}
+            
+            {error && <p className="goal-error">{error}</p>}
         </li>
     );
 

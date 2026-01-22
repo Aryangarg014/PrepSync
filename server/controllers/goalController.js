@@ -179,6 +179,8 @@ async function markGoalComplete(req, res){
             completedAt : new Date()
         })
 
+        await goal.save();
+
         // STREAK
         const user = await User.findById(userId);
 

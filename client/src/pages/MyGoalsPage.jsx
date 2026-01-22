@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import { getUserGoals, createGoal } from "../api/goalService";
 import GoalItem from "../components/GoalItem";
 import { toast } from "react-toastify";
+import './MyGoalsPage.css';
 
 const MyGoalsPage = () => {
     // state for the getUserGoals
@@ -68,46 +69,50 @@ const MyGoalsPage = () => {
     }
 
     return (
-        <div style={{padding : "2rem"}}>
+        <div className="goals-page">
             <h1>My Goals</h1>
 
-            <div>
+            <div className="card create-goal-card">
                 <h3>Create a New Personal Goal</h3>
-                <form onSubmit={ handleCreateGoal }>
-                    <div style={{ marginBottom : "0.5rem" }}>
-                        <label>Title:</label>
-                        <input
-                            type="text"
-                            value={newGoalTitle}
-                            onChange={(e) => setNewGoalTitle(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div style={{ marginBottom : "0.5rem" }}>
-                        <label>Description:</label>
-                        <input
-                            type="text"
-                            value={newGoalDesc}
-                            onChange={(e) => setNewGoalDesc(e.target.value)}
-                        />
-                    </div>
-                    <div style={{marginBottom : "1rem"}}>
-                        <label>Due Date:</label>
-                        <input
-                            type="date"
-                            value={newGoalDueDate}
-                            onChange={(e) => setNewGoalDueDate(e.target.value)}   
-                        />
+                <form onSubmit={ handleCreateGoal } className="create-goal-form">
+                    <div className="form-row-top">
+                        <div className="form-field">
+                            <label>Title</label>
+                            <input
+                                type="text"
+                                value={newGoalTitle}
+                                onChange={(e) => setNewGoalTitle(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-field">
+                            <label>Due Date:</label>
+                            <input
+                                type="date"
+                                value={newGoalDueDate}
+                                onChange={(e) => setNewGoalDueDate(e.target.value)}   
+                            />
+                        </div>
                     </div>
                     
-                    <button type="submit">Create Goal</button>
+                    <div className="form-row-bottom">
+                        <div className="form-field form-field-description">
+                            <label>Description</label>
+                            <textarea
+                                value={newGoalDesc}
+                                onChange={(e) => setNewGoalDesc(e.target.value)}
+                                rows="4"
+                            />
+                        </div>
+                        <button className="btn btn-primary btn-create-goal" type="submit">Create Goal</button>
+                    </div>
                 </form>
             </div>
 
-            <div style={{ marginTop : "2rem" }}>
+            <div className="card goals-section">
                 <h2>My Personal Goals</h2>
                 { personalGoals?.length > 0 ? (
-                    <ul>
+                    <ul className="goals-list">
                         {personalGoals.map((goal) => (
                             <GoalItem 
                                 key={goal._id}
@@ -121,10 +126,10 @@ const MyGoalsPage = () => {
                 )}
             </div>
 
-            <div style={{ marginTop : "2rem" }}>
+            <div className="card goals-section">
                 <h2>My Group Goals</h2>
                 { groupGoals?.length > 0 ? (
-                    <ul>
+                    <ul className="goals-list">
                         {groupGoals.map((goal) => (
                             <GoalItem 
                                 key={goal._id}
