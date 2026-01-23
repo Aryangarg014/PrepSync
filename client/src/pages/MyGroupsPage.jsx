@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { createGroup, getUserGroups, joinGroup } from "../api/groupService";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import './MyGroupsPage.css';
 
 const MyGroupsPage = () => {
     // State for the list of groups
@@ -71,78 +72,83 @@ const MyGroupsPage = () => {
     }
 
     if (loading) {
-        return <div style={{ padding: '2rem' }}>Loading your groups...</div>;
+        return <div className="loading-state">Loading your groups...</div>;
     }
 
     if (error) {
-        return <div style={{ padding: '2rem', color: 'red' }}>Error: {error}</div>;
+        return <div className="error-state">Error: {error}</div>;
     }
 
     return (
-        <div>
+        <div className="groups-page">
             <h1>My Groups</h1>
 
-            <div>
+            <div className="card create-group-card">
                 <h3>Create New Group</h3>
-                <form onSubmit={handleCreateGroup}>
-                    <div style={{ marginBottom: '0.5rem' }}>
-                        <label>Group Name:</label>
-                        <input
-                            type="text"
-                            value={newGroupName}
-                            onChange={(e) => { setNewGroupName(e.target.value); }}
-                            required
-                        />
+                <form onSubmit={handleCreateGroup} className="create-group-form">
+                    <div className="form-row">
+                        <div className="form-field">
+                            <label>Group Name</label>
+                            <input
+                                type="text"
+                                value={newGroupName}
+                                onChange={(e) => { setNewGroupName(e.target.value); }}
+                                required
+                            />
+                        </div>
+                        <button className="btn btn-primary btn-create-group" type="submit">Create Group</button>
                     </div>
-                    <div style={{ marginBottom: '0.5rem' }}>
-                        <label>Group Description:</label>
-                        <input
-                            type="text"
+                    <div className="form-field">
+                        <label>Group Description</label>
+                        <textarea
                             value={newGroupDesc}
                             onChange={(e) => { setNewGroupDesc(e.target.value) }}
+                            placeholder="Enter group description (optional)"
                         />
                     </div>
-                    
-                    <button type="submit">Create Group</button>
                 </form>
             </div>
 
-            <div>
+            <div className="card join-group-card">
                 <h3>Join a Group</h3>
-                <form onSubmit={handleJoinGroup}>
-                    <div style={{ marginBottom : '0.5rem' }}>
-                        <label>Group ID:</label>
-                        <input
-                            type="text"
-                            value={groupIdToJoin}
-                            onChange={(e) => { setGroupIdToJoin(e.target.value); }}
-                            placeholder="Paste Group ID here"
-                            required
-                        />
+                <form onSubmit={handleJoinGroup} className="join-group-form">
+                    <div className="form-row">
+                        <div className="form-field">
+                            <label>Group ID</label>
+                            <input
+                                type="text"
+                                value={groupIdToJoin}
+                                onChange={(e) => { setGroupIdToJoin(e.target.value); }}
+                                placeholder="Paste Group ID here"
+                                required
+                            />
+                        </div>
+                        <button className="btn btn-primary btn-join-group" type="submit">Join Group</button>
                     </div>
-                    <button type="submit">Join Group</button>
                 </form>
             </div>
 
-            <div>
+            <div className="card groups-section">
                 <h2>Your Groups</h2>
                 {groups.length > 0 ? (
-                    <ul>
+                    <ul className="groups-list">
                         {groups.map((group) => (
                             <Link
                                 to={`/group/${group._id}`}
                                 key={group._id}
-                                style={{ textDecoration: 'none', color: 'black' }}
+                                className="group-card"
                             >
-                                <li>
+                                <div className="group-content">
                                     <h4>{group.name}</h4>
-                                    <p>{group.description}</p>
-                                </li>
+                                    {group.description && <p>{group.description}</p>}
+                                </div>
                             </Link>
                         ))}
                     </ul>
                 ) : (
-                    <p>You haven't joined or created any group yet.</p>
+                    <p className="empty-state">
+                        You haven't joined or created any group yet.
+                    </p>
                 )}
             </div>
         </div>
