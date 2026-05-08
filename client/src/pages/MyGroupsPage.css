@@ -215,6 +215,134 @@
   }
 }
 
+/* ===== RESPONSIVE GROUPS PAGE ===== */
+@media (max-width: 1024px) {
+  .groups-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .groups-page > h1 {
+    font-size: 2rem;
+  }
+
+  .create-group-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .create-group-form .btn-create-group {
+    grid-column: 1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .groups-page {
+    max-width: 100%;
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .groups-page > h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .create-group-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-field label {
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: 0.65rem 0.875rem;
+    font-size: 0.95rem;
+  }
+
+  .join-group-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .groups-page {
+    padding: 0.75rem;
+    min-height: auto;
+  }
+
+  .groups-page > h1 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  .create-group-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .create-group-card h3::before {
+    width: 28px;
+    height: 28px;
+    font-size: 1.25rem;
+  }
+
+  .form-field label {
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .create-group-form .form-row {
+    gap: 1rem;
+  }
+
+  .btn-create-group {
+    min-width: 120px !important;
+  }
+
+  .join-group-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .join-group-card h3::before {
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+  }
+
+  .join-group-form .form-row {
+    gap: 1rem;
+  }
+
+  .btn-join-group {
+    min-width: 120px !important;
+  }
+}
+
 /* ===== Form Fields ===== */
 .form-field {
   display: flex;

@@ -98,3 +98,82 @@
 .auth-footer a:hover {
   text-decoration: underline;
 }
+
+/* ======= RESPONSIVE AUTH ======= */
+@media (max-width: 768px) {
+  .auth-container {
+    min-height: 90vh;
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-card {
+    padding: 2rem;
+    max-width: 100%;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+
+  .auth-btn {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    min-height: 85vh;
+    padding: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .auth-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group {
+    margin-bottom: 0.9rem;
+  }
+
+  .form-label {
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .form-input {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+
+  .auth-btn {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+
+  .auth-footer {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+}

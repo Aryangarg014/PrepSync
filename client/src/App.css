@@ -10,33 +10,22 @@
   z-index: 100;
 }
 
-.nav-brand {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  text-decoration: none;
-  letter-spacing: -0.5px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.nav-item {
-  text-decoration: none;
-  color: var(--nav-muted);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.nav-item:hover {
-  color: var(--nav-hover);
-}
-
 /* CTA button inside navbar */
 .navbar .btn-primary {
   background-color: var(--primary);
   color: #ffffff;
+}
+
+/* ======= RESPONSIVE NAVBAR ======= */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+  }
 }

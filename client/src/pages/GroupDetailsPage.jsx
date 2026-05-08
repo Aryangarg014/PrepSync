@@ -7,6 +7,7 @@ import { addResource, deleteResource, getGroupResources } from "../api/resourceS
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import './GroupDetailsPage.css';
 
 const GroupDetailsPage = () => {
     const { id } = useParams();     // Group Id
@@ -245,14 +246,15 @@ const GroupDetailsPage = () => {
         </div>
 
         {/* Group Details */}
-        <h1 style={{ marginTop: "1rem" }}> {group.name} </h1>
-        <p> {group.description} </p>
+        <h1>{group.name}</h1>
+        <p>{group.description}</p>
         <p><strong>Group ID:</strong> {group._id}</p>
         <small>Created by: {group.createdBy.name} ({group.createdBy.email})</small>
 
-        <div>
-            <h2>🏆 Leaderboard</h2>
-            <table>
+        {/* Leaderboard */}
+        <div className="card leaderboard-card">
+            <h2>Leaderboard</h2>
+            <table className="leaderboard-table">
                 <thead>
                     <tr>
                         <th>Rank</th>
@@ -261,64 +263,92 @@ const GroupDetailsPage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {leaderboard.map((member, index) => (
+                    {leaderboard.map((member, index) => {
+                        const rankClass = index === 0 ? "gold" : index === 1 ? "silver" : index === 2 ? "bronze" : "";
+                        return (
                             <tr key={member._id}>
-                                <td> {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}</td>
-                                <td> {member.name} {member._id === group.createdBy._id && "(Admin)"}</td>
-                                <td> {member.score}</td>
+                                <td>
+                                    <span className={`rank-badge ${rankClass}`}>
+                                        {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="member-name">
+                                        {member.name}
+                                        {member._id === group.createdBy._id && (
+                                            <span className="admin-badge">Admin</span>
+                                        )}
+                                    </div>
+                                </td>
+                                <td>{member.score}</td>
                             </tr>
-                    ))}
+                        );
+                    })}
                 </tbody>
             </table>
-
         </div>
 
-        <div style={{ marginTop : "2rem" }}>
+        {/* Members */}
+        <div className="card members-card">
             <h2>Members ({group.members.length})</h2>
-            <ul style={{ listStyle : "none" }}>
+            <ul className="members-list">
                 {group.members.map( (member) => (
-                    <li key={member._id} style={{ border : "1px solid black", padding: "0.5rem", marginTop : "1rem" }}>
-                        {member.name} ({member.email})
+                    <li key={member._id} className="member-item">
+                        <div className="member-info">
+                            <div className="member-name-text">{member.name}</div>
+                            <div className="member-email">{member.email}</div>
+                        </div>
+                        {member._id === group.createdBy._id && (
+                            <span className="admin-badge">Admin</span>
+                        )}
                     </li>
                 ) )}
             </ul>
         </div>
         
         {/* Group Goals */}
-        <div>
+        <div className="card goals-section-card">
             <h2>Group Goals</h2>
-            <div style={{ marginTop : "1rem" }}>
+            
+            <div className="card create-goal-card">
                 <h4>Create a Goal for this Group</h4>
-                <form onSubmit={handleCreateGoal}>
-                    <div style={{marginBottom : "0.5rem"}}>
-                        <input
-                            type="text"
-                            placeholder="Goal Title"
-                            value={goalTitle}
-                            onChange={(e) => setGoalTitle(e.target.value)}
-                            required
-                            style={{ marginRight: "0.5rem" }}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Description (optional)"
-                            value={goalDesc}
-                            onChange={(e) => setGoalDesc(e.target.value)}
-                            style={{ marginRight: "0.5rem" }}
-                        />
-                        <input
-                            type="date"
-                            value={goalDueDate}
-                            onChange={(e) => setGoalDueDate(e.target.value)}   
-                        />
+                <form onSubmit={handleCreateGoal} className="create-goal-form">
+                    <div className="form-row-top">
+                        <div className="form-field">
+                            <label>Title</label>
+                            <input
+                                type="text"
+                                value={goalTitle}
+                                onChange={(e) => setGoalTitle(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="form-field">
+                            <label>Due Date:</label>
+                            <input
+                                type="date"
+                                value={goalDueDate}
+                                onChange={(e) => setGoalDueDate(e.target.value)}   
+                            />
+                        </div>
                     </div>
-
-                    <button type="submit">Create Group Goal</button>
+                    
+                    <div className="form-row-bottom">
+                        <div className="form-field form-field-description">
+                            <label>Description</label>
+                            <textarea
+                                value={goalDesc}
+                                onChange={(e) => setGoalDesc(e.target.value)}
+                                placeholder="Enter goal description (optional)"
+                            />
+                        </div>
+                        <button className="btn btn-primary btn-create-goal" type="submit">Create Goal</button>
+                    </div>
                 </form>
             </div>
             
             {groupGoals.length > 0 ? (
-                <ul>
+                <ul className="goals-list">
                     { groupGoals.map( (goal) => (
                         <GoalItem
                             key={goal._id}
@@ -328,7 +358,7 @@ const GroupDetailsPage = () => {
                     ) ) }
                 </ul>
             ) : (
-                <p>No Goals set for this group yet.</p>
+                <p className="empty-goals">No Goals set for this group yet.</p>
             )}
         </div>
 
@@ -338,14 +368,15 @@ const GroupDetailsPage = () => {
 
             <div className="add-resource-container">
                 <h4>Share a resource</h4>
-                <div>
+                <div className="resource-type-selector">
                     <label>
                         <input
                             type="radio"
                             name="resType"
                             checked={resourceType === "link"}
                             onChange={() => setResourceType("link")}
-                        /> Link
+                        />
+                        <span>Link</span>
                     </label>
                     <label>
                         <input
@@ -353,11 +384,12 @@ const GroupDetailsPage = () => {
                             name="resType"
                             checked={resourceType === "file"}
                             onChange={() => setResourceType("file")}
-                        /> File (PDF, Doc, Image)
+                        />
+                        <span>File (PDF, Doc, Image)</span>
                     </label>
                 </div>
                 
-                <form onSubmit={handleAddResource}>
+                <form onSubmit={handleAddResource} className="resource-form">
                     <input
                         type="text"
                         placeholder="Resource Title"
@@ -387,23 +419,26 @@ const GroupDetailsPage = () => {
                 </form>
             </div>
 
-            <div className="resources-list">
+            <ul className="resources-list">
                 {resources.length > 0 ? (
                     resources.map( (resource) => {
                         const isOwner = resource.addedBy._id === user.id;
                         const isAdmin = group.createdBy._id === user.id;
 
                         return(
-                            <li key={resource._id}>
+                            <li key={resource._id} className="resource-item">
                                 <div>
                                     {resource.publicId ? (
-                                        // 📎 Uploaded file → download
-                                        <button onClick={() => handleDownload(resource)}>
+                                        <button 
+                                            className="resource-download"
+                                            onClick={() => handleDownload(resource)}
+                                        >
                                             📎 {resource.title}
                                         </button>
                                     ) : (
                                         // 🔗 External link → open normally
                                         <a
+                                            className="resource-link"
                                             href={resource.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -413,17 +448,22 @@ const GroupDetailsPage = () => {
                                     )}
                                 </div>
                                 {(isOwner || isAdmin) && (
-                                    <button onClick={() => handleDeleteResource(resource._id)}>
-                                        Delete
-                                    </button>
+                                    <div className="resource-actions">
+                                        <button 
+                                            className="btn-delete-resource"
+                                            onClick={() => handleDeleteResource(resource._id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 )}
                             </li>
                         );
                     })
                 ) : (
-                    <p>No resources shared yet.</p>
+                    <p className="empty-resources">No resources shared yet.</p>
                 )}
-            </div>
+            </ul>
         </section>
     </div>
   );

@@ -1,0 +1,98 @@
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  min-width: 0;
+  transition: opacity 0.2s ease;
+}
+
+.nav-brand:hover {
+  opacity: 0.85;
+}
+
+.nav-logo {
+  height: 3rem;
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+  max-width: 250px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: var(--nav-muted);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--nav-hover);
+}
+
+@media (max-width: 768px) {
+  .nav-brand-text {
+    font-size: 1.1rem;
+  }
+
+  .nav-logo {
+    height: 2.5rem;
+    max-width: 180px;
+  }
+
+  .nav-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-item {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-brand-text {
+    font-size: 0.95rem;
+  }
+
+  .nav-logo {
+    height: 2rem;
+    max-width: 140px;
+  }
+
+  .nav-links {
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-item {
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-logo {
+    height: 1.8rem;
+    max-width: 120px;
+  }
+
+  .nav-links {
+    gap: 0.5rem;
+  }
+
+  .nav-item {
+    font-size: 0.75rem;
+  }
+}
