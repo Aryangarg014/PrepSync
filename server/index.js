@@ -9,7 +9,7 @@ dotenv.config();
 const mainRouter = require("./routes/main.router");
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 // middlewares
 app.use(cors());
