@@ -413,13 +413,17 @@
   }
 
   .goal-actions {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
     width: 100%;
+    align-items: center;
   }
 
   .goal-actions .btn {
     padding: 0.4rem 0.6rem;
     font-size: 0.7rem;
+    flex: 1;
+    min-width: 0;
   }
 
   .goals-section h2 {
@@ -429,6 +433,20 @@
 
   .edit-mode {
     padding: 1rem;
+  }
+
+  .edit-actions {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  .edit-actions .btn {
+    flex: 1;
+    min-width: 0;
+    padding: 0.4rem 0.55rem;
+    font-size: 0.7rem;
   }
 }
 

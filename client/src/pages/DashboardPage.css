@@ -198,3 +198,119 @@
 .heatmap-cell:hover::before {
   opacity: 1;
 }
+
+
+@media (max-width: 1024px) {
+  .dashboard-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .chart-card {
+    padding: 1.25rem;
+  }
+
+  .chart-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .heatmap-grid-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
+  .heatmap-grid,
+  .month-labels {
+    min-width: 840px;
+  }
+
+  .heatmap-wrapper {
+    min-width: 840px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+  }
+
+  .big-number {
+    font-size: 1.5rem;
+  }
+
+  .chart-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .chart-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .heatmap-card {
+    margin-top: 1.5rem;
+  }
+
+  .heatmap-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .heatmap-grid,
+  .month-labels,
+  .heatmap-wrapper {
+    min-width: 840px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 0.75rem;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .chart-card {
+    padding: 0.85rem;
+  }
+
+  .chart-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .heatmap-grid,
+  .month-labels,
+  .heatmap-wrapper {
+    min-width: 840px;
+  }
+
+  .weekday-labels,
+  .month-labels {
+    font-size: 10px;
+  }
+
+  .heatmap-cell::after {
+    font-size: 12px;
+  }
+}
