@@ -4,8 +4,8 @@ import { createGoal, getUserGoals } from "../api/goalService";
 import { useParams, Link } from "react-router-dom";
 import GoalItem from "../components/GoalItem";
 import { addResource, deleteResource, getGroupResources } from "../api/resourceService";
+import apiClient from "../api/axiosConfig";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 import './GroupDetailsPage.css';
 
@@ -195,8 +195,8 @@ const GroupDetailsPage = () => {
         try {
             const token = localStorage.getItem("token");
             toast.info("Downloading...");
-            const response = await axios.get(
-              `http://localhost:8080/resources/download/${resource._id}`,
+                        const response = await apiClient.get(
+                            `/resources/download/${resource._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
